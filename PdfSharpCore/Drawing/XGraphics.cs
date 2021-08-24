@@ -81,7 +81,7 @@ using PdfSharpCore.Pdf.Advanced;
 // ReSharper disable RedundantNameQualifier
 // ReSharper disable UseNameofExpression
 
-namespace PdfSharpCore.Drawing  // #??? aufräumen
+namespace PdfSharpCore.Drawing  // #??? aufrï¿½umen
 {
     /// <summary>
     /// Holds information about the current state of the XGraphics object.
@@ -1285,7 +1285,7 @@ namespace PdfSharpCore.Drawing  // #??? aufräumen
 
 #if GDI
         /// <summary>
-        /// Draws a Bézier spline defined by four points.
+        /// Draws a Bï¿½zier spline defined by four points.
         /// </summary>
         public void DrawBezier(XPen pen, GdiPoint pt1, GdiPoint pt2, GdiPoint pt3, GdiPoint pt4)
         {
@@ -1298,7 +1298,7 @@ namespace PdfSharpCore.Drawing  // #??? aufräumen
 
 #if WPF
         /// <summary>
-        /// Draws a Bézier spline defined by four points.
+        /// Draws a Bï¿½zier spline defined by four points.
         /// </summary>
         public void DrawBezier(XPen pen, SysPoint pt1, SysPoint pt2, SysPoint pt3, SysPoint pt4)
         {
@@ -1308,7 +1308,7 @@ namespace PdfSharpCore.Drawing  // #??? aufräumen
 
 #if GDI
         /// <summary>
-        /// Draws a Bézier spline defined by four points.
+        /// Draws a Bï¿½zier spline defined by four points.
         /// </summary>
         public void DrawBezier(XPen pen, GdiPointF pt1, GdiPointF pt2, GdiPointF pt3, GdiPointF pt4)
         {
@@ -1317,7 +1317,7 @@ namespace PdfSharpCore.Drawing  // #??? aufräumen
 #endif
 
         /// <summary>
-        /// Draws a Bézier spline defined by four points.
+        /// Draws a Bï¿½zier spline defined by four points.
         /// </summary>
         public void DrawBezier(XPen pen, XPoint pt1, XPoint pt2, XPoint pt3, XPoint pt4)
         {
@@ -1325,7 +1325,7 @@ namespace PdfSharpCore.Drawing  // #??? aufräumen
         }
 
         /// <summary>
-        /// Draws a Bézier spline defined by four points.
+        /// Draws a Bï¿½zier spline defined by four points.
         /// </summary>
         public void DrawBezier(XPen pen, double x1, double y1, double x2, double y2,
           double x3, double y3, double x4, double y4)
@@ -1376,7 +1376,7 @@ namespace PdfSharpCore.Drawing  // #??? aufräumen
 
 #if GDI
         /// <summary>
-        /// Draws a series of Bézier splines from an array of points.
+        /// Draws a series of Bï¿½zier splines from an array of points.
         /// </summary>
         public void DrawBeziers(XPen pen, GdiPoint[] points)
         {
@@ -1386,7 +1386,7 @@ namespace PdfSharpCore.Drawing  // #??? aufräumen
 
 #if WPF
         /// <summary>
-        /// Draws a series of Bézier splines from an array of points.
+        /// Draws a series of Bï¿½zier splines from an array of points.
         /// </summary>
         public void DrawBeziers(XPen pen, SysPoint[] points)
         {
@@ -1396,7 +1396,7 @@ namespace PdfSharpCore.Drawing  // #??? aufräumen
 
 #if GDI
         /// <summary>
-        /// Draws a series of Bézier splines from an array of points.
+        /// Draws a series of Bï¿½zier splines from an array of points.
         /// </summary>
         public void DrawBeziers(XPen pen, GdiPointF[] points)
         {
@@ -1405,7 +1405,7 @@ namespace PdfSharpCore.Drawing  // #??? aufräumen
 #endif
 
         /// <summary>
-        /// Draws a series of Bézier splines from an array of points.
+        /// Draws a series of Bï¿½zier splines from an array of points.
         /// </summary>
         public void DrawBeziers(XPen pen, XPoint[] points)
         {
@@ -5350,6 +5350,20 @@ namespace PdfSharpCore.Drawing  // #??? aufräumen
                 double ymax = Math.Max(Math.Max(points[0].Y, points[1].Y), Math.Max(points[2].Y, points[3].Y));
 
                 return new XRect(xmin, ymin, xmax - xmin, ymax - ymin);
+            }
+
+            /// <summary>
+            /// Gets a point in PDF world space units.
+            /// </summary>
+            public XPoint WorldToDefaultPage(XPoint point)
+            {
+                XMatrix matrix = _gfx.Transform;
+                matrix.Transform(point);
+
+                double height = _gfx.PageSize.Height;
+                point.Y = height - point.Y;
+
+                return point;
             }
         }
     }

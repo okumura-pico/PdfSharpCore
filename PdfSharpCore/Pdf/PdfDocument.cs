@@ -855,6 +855,50 @@ namespace PdfSharpCore.Pdf
             return Catalog.Pages.Insert(index, page, annotationCopying);
         }
 
+
+        /// <summary>  
+        /// Adds a named destination to the document.
+        /// </summary>
+        /// <param name="destinationName">The Named Destination's name.</param>
+        /// <param name="destinationPage">The page to navigate to.</param>
+        /// <param name="parameters">The PdfNamedDestinationParameters defining the named destination's parameters.</param>
+        public void AddNamedDestination(string destinationName, int destinationPage, PdfNamedDestinationParameters parameters)
+        {
+            Internals.Catalog.Names.AddNamedDestination(destinationName, destinationPage, parameters);
+        }
+
+        /// <summary>  
+        /// Adds an embedded file to the document.
+        /// </summary>
+        /// <param name="name">The name used to refer and to entitle the embedded file.</param>
+        /// <param name="path">The path of the file to embed.</param>
+        public void AddEmbeddedFile(string name, string path)
+        {
+            var stream = new FileStream(path, FileMode.Open);
+            AddEmbeddedFile(name, stream);
+        }
+
+        /// <summary>
+        /// Adds an embedded file to the document.
+        /// </summary>
+        /// <param name="name">The name used to refer and to entitle the embedded file.</param>
+        /// <param name="stream">The stream containing the file to embed.</param>
+        public void AddEmbeddedFile(string name, Stream stream)
+        {
+            Internals.Catalog.Names.AddEmbeddedFile(name, stream);
+        }
+
+        /// <summary>  
+        /// Flattens a document (make the fields non-editable).  
+        /// </summary>  
+        public void Flatten()
+        {
+            for (int idx = 0; idx < AcroForm.Fields.Count; idx++)
+            {
+                AcroForm.Fields[idx].ReadOnly = true;
+            }
+        }
+        
         /// <summary>
         /// Gets the security handler.
         /// </summary>
