@@ -52,6 +52,18 @@ namespace PdfSharpCore.Pdf.Actions
             Inititalize();
         }
 
+        /// <summary>
+        /// Creates a link within the current document.
+        /// </summary>
+        /// <param name="destinationName">The Named Destination's name in the target document.</param>
+        public static PdfGoToAction CreateGoToAction(string destinationName)
+        {
+            PdfGoToAction action = new PdfGoToAction();
+            action._destinationName = destinationName;
+            return action;
+        }
+        string _destinationName;
+
         void Inititalize()
         {
             Elements.SetName(PdfAction.Keys.Type, "/Action");
@@ -71,7 +83,7 @@ namespace PdfSharpCore.Pdf.Actions
             //public const string S = "/S";
 
             /// <summary>
-            /// (Required) The destination to jump to (see Section 8.2.1, “Destinations”).
+            /// (Required) The destination to jump to (see Section 8.2.1, ï¿½Destinationsï¿½).
             /// </summary>
             [KeyInfo(KeyType.Name | KeyType.ByteString | KeyType.Array | KeyType.Required)]
             public const string D = "/D";

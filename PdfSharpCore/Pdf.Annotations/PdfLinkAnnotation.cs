@@ -30,6 +30,7 @@
 using System;
 using PdfSharpCore.Pdf.IO;
 using PdfSharpCore.Pdf.Internal;
+using PdfSharpCore.Pdf.Actions;
 
 namespace PdfSharpCore.Pdf.Annotations
 {
@@ -41,7 +42,7 @@ namespace PdfSharpCore.Pdf.Annotations
         // Just a hack to make MigraDoc work with this code.
         enum LinkType
         {
-            None, Document, Web, File
+            None, Document, NamedDestination, Web, File
         }
 
         /// <summary>
@@ -83,6 +84,76 @@ namespace PdfSharpCore.Pdf.Annotations
         LinkType _linkType;
         string _url;
 
+        /// <summary>
+        /// Creates a link within the current document using a named destination.
+        /// </summary>
+        /// <param name="rect">The link area in default page coordinates.</param>
+        /// <param name="destinationName">The named destination's name.</param>
+        public static PdfLinkAnnotation CreateDocumentLink(PdfRectangle rect, string destinationName)
+        {
+            PdfLinkAnnotation link = new PdfLinkAnnotation();
+            link._linkType = LinkType.NamedDestination;
+            link.Rectangle = rect;
+            link._action = PdfGoToAction.CreateGoToAction(destinationName);
+            return link;
+        }
+        PdfAction _action;
+
+        /// <summary>
+        /// Creates a link to an external PDF document using a named destination.
+        /// </summary>
+        /// <param name="rect">The link area in default page coordinates.</param>
+        /// <param name="documentPath">The path to the target document.</param>
+        /// <param name="destinationName">The named destination's name in the target document.</param>
+        /// <param name="newWindow">True, if the destination document shall be opened in a new window.
+        /// If not set, the viewer application should behave in accordance with the current user preference.</param>
+        public static PdfLinkAnnotation CreateDocumentLink(PdfRectangle rect, string documentPath, string destinationName, bool? newWindow = null)
+        {
+            PdfLinkAnnotation link = new PdfLinkAnnotation();
+            link._linkType = LinkType.NamedDestination;
+            link.Rectangle = rect;
+            link._action = PdfRemoteGoToAction.CreateRemoteGoToAction(documentPath, destinationName, newWindow);
+            return link;
+        }
+
+        /// <summary>
+        /// Creates a link to an embedded document.
+        /// </summary>
+        /// <param name="rect">The link area in default page coordinates.</param>
+        /// <param name="destinationPath">The path to the named destination through the embedded documents.
+        /// The path is separated by '\' and the last segment is the name of the named destination.
+        /// The other segments describe the route from the current (root or embedded) document to the embedded document holding the destination.
+        /// ".." references to the parent, other strings refer to a child with this name in the EmbeddedFiles name dictionary.</param>
+        /// <param name="newWindow">True, if the destination document shall be opened in a new window.
+        /// If not set, the viewer application should behave in accordance with the current user preference.</param>
+        public static PdfLinkAnnotation CreateEmbeddedDocumentLink(PdfRectangle rect, string destinationPath, bool? newWindow = null)
+        {
+            PdfLinkAnnotation link = new PdfLinkAnnotation();
+            link._linkType = LinkType.NamedDestination;
+            link.Rectangle = rect;
+            link._action = PdfEmbeddedGoToAction.CreatePdfEmbeddedGoToAction(destinationPath, newWindow);
+            return link;
+        }
+
+        /// <summary>
+        /// Creates a link to an embedded document in another document.
+        /// </summary>
+        /// <param name="rect">The link area in default page coordinates.</param>
+        /// <param name="documentPath">The path to the target document.</param>
+        /// <param name="destinationPath">The path to the named destination through the embedded documents in the target document.
+        /// The path is separated by '\' and the last segment is the name of the named destination.
+        /// The other segments describe the route from the root document to the embedded document.
+        /// Each segment name refers to a child with this name in the EmbeddedFiles name dictionary.</param>
+        /// <param name="newWindow">True, if the destination document shall be opened in a new window.
+        /// If not set, the viewer application should behave in accordance with the current user preference.</param>
+        public static PdfLinkAnnotation CreateEmbeddedDocumentLink(PdfRectangle rect, string documentPath, string destinationPath, bool? newWindow = null)
+        {
+            PdfLinkAnnotation link = new PdfLinkAnnotation();
+            link._linkType = LinkType.NamedDestination;
+            link.Rectangle = rect;
+            link._action = PdfEmbeddedGoToAction.CreatePdfEmbeddedGoToAction(documentPath, destinationPath, newWindow);
+            return link;
+        }
         /// <summary>
         /// Creates a link to the web.
         /// </summary>
@@ -180,11 +251,11 @@ namespace PdfSharpCore.Pdf.Annotations
             public const string Dest = "/Dest";
 
             /// <summary>
-            /// (Optional; PDF 1.2) The annotation’s highlighting mode, the visual effect to be
+            /// (Optional; PDF 1.2) The annotationï¿½s highlighting mode, the visual effect to be
             /// used when the mouse button is pressed or held down inside its active area:
             /// N (None) No highlighting.
             /// I (Invert) Invert the contents of the annotation rectangle.
-            /// O (Outline) Invert the annotation’s border.
+            /// O (Outline) Invert the annotationï¿½s border.
             /// P (Push) Display the annotation as if it were being pushed below the surface of the page.
             /// Default value: I.
             /// Note: In PDF 1.1, highlighting is always done by inverting colors inside the annotation rectangle.
